@@ -32,6 +32,7 @@
 	</p>
 	<p>{{test}}</p>
 </div>
+<input  type="button" value="查看购物车" />
 <script type="text/javascript">
 function weatherController($http,$scope){
 	$scope.cityname = '上海';
