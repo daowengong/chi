@@ -1,15 +1,19 @@
 package com.llr.chihuo.config;
 
+import java.util.Arrays;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
 import org.springframework.webflow.config.AbstractFlowConfiguration;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
-import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
-import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
+import org.springframework.webflow.mvc.servlet.FlowController;
 
 @Configuration
 public class WebFlowConfig extends AbstractFlowConfiguration {
@@ -37,23 +41,25 @@ public class WebFlowConfig extends AbstractFlowConfiguration {
     }
     
     @Bean
+    public ViewResolver viewResolver(){
+    	InternalResourceViewResolver view = new InternalResourceViewResolver();
+        view.setViewClass(JstlView.class);
+        view.setPrefix("/WEB-INF/views/");
+        view.setSuffix(".jsp");
+        return view;
+    }
+    
+    @Bean
     public MvcViewFactoryCreator mvcViewFactoryCreator() {
         MvcViewFactoryCreator mvcViewFactoryCreator = new MvcViewFactoryCreator();
+        mvcViewFactoryCreator.setViewResolvers(Arrays.<ViewResolver>asList(viewResolver()));
         return mvcViewFactoryCreator;
     }
     
-    @Bean
-    public FlowHandlerMapping flowHandlerMapping() {
-        FlowHandlerMapping flowHandlerMapping = new FlowHandlerMapping();
-        flowHandlerMapping.setFlowRegistry(flowRegistry());
-        flowHandlerMapping.setOrder(-1);
-        return flowHandlerMapping;
-    }
-    
-    @Bean
-    public FlowHandlerAdapter flowHandlerAdapter() {
-        FlowHandlerAdapter flowHandlerAdapter = new FlowHandlerAdapter();
-        flowHandlerAdapter.setFlowExecutor(flowExecutor());
-        return flowHandlerAdapter;
+    @Bean(name = { "/shopping", "/shopping/*" })
+    public FlowController flowController(){
+    	FlowController flowController = new FlowController();
+    	flowController.setFlowExecutor(flowExecutor());
+		return flowController;
     }
 }
