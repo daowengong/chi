@@ -1,4 +1,4 @@
-package com.llr.chihuo.config;
+package shoppingcart.config;
 
 import java.util.Arrays;
 
